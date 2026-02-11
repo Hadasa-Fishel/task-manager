@@ -1,0 +1,70 @@
+<div class="teams-container">
+  
+  <div class="header-actions">
+    <div class="titles">
+      <h2>My Teams</h2>
+      <p>Manage your workspace and collaborators</p>
+    </div>
+    
+    <button mat-flat-button color="primary" (click)="showCreateForm = !showCreateForm">
+      <mat-icon>{{ showCreateForm ? 'close' : 'add' }}</mat-icon>
+      {{ showCreateForm ? 'Cancel' : 'New Team' }}
+    </button>
+  </div>
+
+  @if (showCreateForm) {
+    <div class="create-form-wrapper">
+      <form [formGroup]="createTeamForm" (ngSubmit)="onSubmit()" class="inline-form">
+        <mat-form-field appearance="outline" class="thin-input">
+          <mat-label>Team Name</mat-label>
+          <input matInput formControlName="name" placeholder="e.g. Development Team">
+          @if (createTeamForm.get('name')?.hasError('minlength')) {
+             <mat-error>Name must be at least 3 chars</mat-error>
+          }
+        </mat-form-field>
+        <button mat-flat-button color="primary" type="submit" [disabled]="createTeamForm.invalid">
+          Create Team
+        </button>
+      </form>
+    </div>
+  }
+
+  @if (teamsService.isLoading()) {
+    <mat-progress-bar mode="indeterminate" class="loading-bar"></mat-progress-bar>
+  }
+
+  <div class="cards-grid">
+    @for (team of teamsService.myTeams(); track team.id) {
+      <div class="team-card">
+        <div class="card-header">
+          <h3>{{ team.name }}</h3>
+        </div>
+        
+        <div class="card-body">
+          <div class="stat">
+            <span class="number">{{ team.members_count || 1 }}</span>
+            <span class="label">Members</span>
+          </div>
+        </div>
+
+        <div class="card-actions">
+          <button class="action-btn primary" (click)="enterProjects(team.id)">
+            Open Projects
+          </button>
+          
+          <button class="action-btn secondary" (click)="addMember(team.id)">
+            Add Member
+          </button>
+        </div>
+      </div>
+    } @empty {
+      @if (!teamsService.isLoading()) {
+        <div class="empty-state">
+          <mat-icon>group_off</mat-icon>
+          <p>You don't have any teams yet.</p>
+          <button class="action-btn secondary" (click)="showCreateForm = true">Create your first team</button>
+        </div>
+      }
+    }
+  </div>
+</div>

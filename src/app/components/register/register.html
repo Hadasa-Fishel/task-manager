@@ -1,0 +1,46 @@
+<div class="auth-container">
+  <div class="auth-card">
+    
+    <div class="auth-header">
+      <h2>Create Account</h2>
+      <p>Join us to start managing tasks</p>
+    </div>
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Full Name</mat-label>
+        <input matInput formControlName="name" type="text" placeholder="John Doe">
+        @if (registerForm.get('name')?.hasError('required')) {
+          <mat-error>Name is required</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Email Address</mat-label>
+        <input matInput formControlName="email" type="email" placeholder="example@mail.com">
+        @if (registerForm.get('email')?.hasError('email')) {
+          <mat-error>Invalid email</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Password</mat-label>
+        <input matInput formControlName="password" type="password">
+        @if (registerForm.get('password')?.hasError('minlength')) {
+          <mat-error>Min 6 characters</mat-error>
+        }
+      </mat-form-field>
+
+      <button mat-flat-button color="primary" type="submit" [disabled]="registerForm.invalid" class="submit-btn">
+        Sign Up
+      </button>
+
+      <div class="auth-footer">
+        <span>Already have an account?</span>
+        <a routerLink="/login">Sign In</a>
+      </div>
+
+    </form>
+  </div>
+</div>

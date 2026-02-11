@@ -1,0 +1,85 @@
+.app-header {
+  background-color: #ffffff;
+  border-bottom: 1px solid #eef2f6; /* קו הפרדה דקיק */
+  height: 60px;
+  display: flex;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.02); /* צל כמעט בלתי נראה */
+}
+
+.header-content {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.left-section {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+}
+
+.logo {
+  font-size: 18px;
+  font-weight: 500; /* מדיום */
+  color: #3f51b5;
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 25px;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #7f8c8d;
+  font-size: 14px;
+  font-weight: 400;
+  transition: color 0.3s;
+}
+
+.nav-links a:hover {
+  color: #3f51b5;
+}
+
+.nav-links a.active-link {
+  color: #3f51b5;
+  font-weight: 500;
+}
+
+.right-section {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.user-name {
+  font-size: 14px;
+  color: #2c3e50;
+  font-weight: 400;
+}
+
+.logout-btn {
+  background: none;
+  border: 1px solid #e0e7ff;
+  padding: 8px 16px;
+  border-radius: 4px;
+  color: #7f8c8d;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.logout-btn:hover {
+  border-color: #3f51b5;
+  color: #3f51b5;
+}

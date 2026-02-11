@@ -1,0 +1,18 @@
+<header class="app-header">
+  <div class="header-content">
+    
+    <div class="left-section">
+      <h1 class="logo">WolfTasks</h1>
+      <nav class="nav-links">
+        <a routerLink="/teams" routerLinkActive="active-link">Teams</a>
+        <a routerLink="/projects" routerLinkActive="active-link">All Projects</a>
+      </nav>
+    </div>
+
+    <div class="right-section">
+      <span class="user-name">Hello, {{ userName() }}</span>
+      <button class="logout-btn" (click)="onLogout()">Log Out</button>
+    </div>
+
+  </div>
+</header>

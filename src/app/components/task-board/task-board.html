@@ -1,0 +1,141 @@
+<div class="board-container">
+  
+  <div class="board-header">
+    <h2>Project Board</h2>
+    <div class="legend">
+      <span class="badge high">High Priority</span>
+      <span class="badge medium">Medium</span>
+      <span class="badge low">Low</span>
+    </div>
+  </div>
+
+  <div class="columns-wrapper">
+    
+    <div class="board-column todo-col">
+      <div class="column-header">
+        <h3>To Do <span class="count">{{ todoTasks().length }}</span></h3>
+        <button class="add-btn-small" (click)="openAddModal('todo')">+</button>
+      </div>
+      
+      <div class="tasks-list">
+        @for (task of todoTasks(); track task.id) {
+          <ng-container *ngTemplateOutlet="taskCard; context: { $implicit: task }"></ng-container>
+        }
+      </div>
+    </div>
+
+    <div class="board-column progress-col">
+      <div class="column-header">
+        <h3>In Progress <span class="count">{{ inProgressTasks().length }}</span></h3>
+        <button class="add-btn-small" (click)="openAddModal('in-progress')">+</button>
+      </div>
+
+      <div class="tasks-list">
+        @for (task of inProgressTasks(); track task.id) {
+          <ng-container *ngTemplateOutlet="taskCard; context: { $implicit: task }"></ng-container>
+        }
+      </div>
+    </div>
+
+    <div class="board-column done-col">
+      <div class="column-header">
+        <h3>Done <span class="count">{{ doneTasks().length }}</span></h3>
+        <button class="add-btn-small" (click)="openAddModal('done')">+</button>
+      </div>
+
+      <div class="tasks-list">
+        @for (task of doneTasks(); track task.id) {
+          <ng-container *ngTemplateOutlet="taskCard; context: { $implicit: task }"></ng-container>
+        }
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<ng-template #taskCard let-task>
+  <div class="task-card" [class.border-high]="task.priority === 'HIGH'">
+    
+    <div class="task-header">
+      <span class="priority-dot" [ngClass]="task.priority?.toLowerCase()"></span>
+      <span class="date">{{ task.created_at | date:'d MMM' }}</span>
+      
+      <button mat-icon-button [matMenuTriggerFor]="menu" class="more-btn">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="openEditModal(task)">Edit Task</button>
+        <button mat-menu-item (click)="deleteTask(task.id)">Delete</button>
+      </mat-menu>
+    </div>
+
+    <h4>{{ task.title }}</h4>
+    
+    <p class="desc">{{ task.description }}</p>
+
+    <div class="task-footer">
+      <button class="footer-btn">
+        <mat-icon>chat_bubble_outline</mat-icon> 0
+      </button>
+
+      <div class="move-actions">
+        @if (task.status !== 'todo') {
+          <button (click)="moveTask(task, 'todo')" title="Move to Todo">Start</button>
+        }
+        @if (task.status === 'todo') {
+          <button (click)="moveTask(task, 'in-progress')" title="Start Working">Start</button>
+        }
+        @if (task.status === 'in-progress') {
+          <button (click)="moveTask(task, 'done')" title="Complete">Done</button>
+        }
+      </div>
+    </div>
+
+  </div>
+</ng-template>
+
+@if (showModal) {
+  <div class="modal-overlay" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <h3>{{ isEditing ? 'Edit Task' : 'New Task' }}</h3>
+      
+      <form [formGroup]="taskForm" (ngSubmit)="saveTask()">
+        
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Task Title</mat-label>
+          <input matInput formControlName="title">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Description</mat-label>
+          <textarea matInput formControlName="description" rows="3"></textarea>
+        </mat-form-field>
+
+        <div class="row">
+          <mat-form-field appearance="outline">
+            <mat-label>Priority</mat-label>
+            <mat-select formControlName="priority">
+              <mat-option value="HIGH">High 🔥</mat-option>
+              <mat-option value="MEDIUM">Medium</mat-option>
+              <mat-option value="LOW">Low</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Status</mat-label>
+            <mat-select formControlName="status">
+              <mat-option value="todo">To Do</mat-option>
+              <mat-option value="in-progress">In Progress</mat-option>
+              <mat-option value="done">Done</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" mat-button (click)="closeModal()">Cancel</button>
+          <button type="submit" mat-flat-button color="primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

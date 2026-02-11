@@ -1,0 +1,77 @@
+<div class="projects-container">
+
+  <div class="header-actions">
+    <div class="titles">
+      <h2>{{ currentTeamId ? 'Team Projects' : 'All Projects' }}</h2>
+      <p>Manage your projects effectively</p>
+    </div>
+
+    @if (currentTeamId) {
+      <button mat-flat-button color="primary" (click)="showCreateForm = !showCreateForm">
+        {{ showCreateForm ? 'Cancel' : '+ New Project' }}
+      </button>
+    }
+  </div>
+
+  @if (showCreateForm && currentTeamId) {
+    <div class="create-form-wrapper">
+      <form [formGroup]="projectForm" (ngSubmit)="onSubmit()" class="project-form">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Project Name</mat-label>
+          <input matInput formControlName="name">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Description</mat-label>
+          <textarea matInput formControlName="description" rows="2"></textarea>
+        </mat-form-field>
+
+        <div class="form-actions">
+          <button mat-stroked-button type="submit" [disabled]="projectForm.invalid">
+            Create Project
+          </button>
+        </div>
+      </form>
+    </div>
+  }
+
+  <div class="cards-grid">
+    @if (projectsService.isLoading()) {
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    }
+
+    @for (project of projectsService.projects(); track project.id) {
+      <div class="project-card">
+        
+        <div class="card-header">
+          @if (!currentTeamId) {
+            <span class="team-badge">{{ getTeamName(project.teamId) }}</span>
+          }
+          <h3>{{ project.name }}</h3>
+        </div>
+
+        <div class="card-body">
+          <p class="description">{{ project.description }}</p>
+          <div class="meta-info">
+            <span class="date">Created: {{ project.created_at | date:'shortDate' }}</span>
+          </div>
+        </div>
+
+        <div class="card-actions">
+          <button class="action-btn primary" (click)="goToTasks(project.id)">
+            View Tasks
+          </button>
+          
+          <button class="icon-btn delete" (click)="deleteProject(project.id)">
+            <mat-icon>delete_outline</mat-icon>
+          </button>
+        </div>
+
+      </div>
+    } @empty {
+      @if (!projectsService.isLoading()) {
+        <div class="empty-state"><p>No projects found.</p></div>
+      }
+    }
+  </div>
+</div>

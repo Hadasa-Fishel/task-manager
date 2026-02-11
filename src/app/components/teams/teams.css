@@ -1,0 +1,180 @@
+.teams-container {
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 0 20px;
+  font-family: 'Roboto', sans-serif;
+}
+
+/* Header */
+.header-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.titles h2 {
+  font-weight: 300;
+  font-size: 28px;
+  margin: 0;
+  color: #2c3e50;
+}
+
+.titles p {
+  color: #95a5a6;
+  font-size: 13px;
+  margin-top: 5px;
+}
+
+/* Create Form */
+.create-form-wrapper {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #eef2f6;
+  margin-bottom: 30px;
+  animation: slideDown 0.3s ease;
+}
+
+.inline-form {
+  display: flex;
+  gap: 15px;
+  align-items: flex-start; /* יישור לחלק העליון כדי שהודעת השגיאה לא תזיז הכל */
+}
+
+.thin-input {
+  width: 100%;
+  max-width: 300px;
+  font-size: 13px;
+}
+
+/* Grid */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 25px;
+}
+
+.loading-bar {
+  grid-column: 1 / -1;
+  margin-bottom: 20px;
+  border-radius: 4px;
+}
+
+/* --- Card Design --- */
+.team-card {
+  background: white;
+  border-radius: 8px;
+  padding: 25px;
+  
+  /* היוקרה: מסגרת דקה ופס כחול עליון */
+  border: 1px solid #eef2f6;
+  border-top: 3px solid #3f51b5;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+  
+  text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.team-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(63, 81, 181, 0.1);
+}
+
+.card-header h3 {
+  font-size: 18px;
+  font-weight: 400;
+  color: #2c3e50;
+  margin-bottom: 20px;
+  margin-top: 0;
+}
+
+.stat .number {
+  display: block;
+  font-size: 32px;
+  font-weight: 300;
+  color: #3f51b5;
+}
+
+.stat .label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #b0b0b0;
+}
+
+.card-actions {
+  margin-top: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Buttons */
+.action-btn {
+  width: 100%;
+  padding: 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 500;
+}
+
+.primary {
+  background: #3f51b5;
+  color: white;
+  border: none;
+}
+
+.primary:hover {
+  background: #303f9f;
+}
+
+.secondary {
+  background: transparent;
+  color: #7f8c8d;
+  border: 1px solid #e0e0e0;
+}
+
+.secondary:hover {
+  border-color: #3f51b5;
+  color: #3f51b5;
+  background-color: #f5f5f5;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  color: #95a5a6;
+  grid-column: 1 / -1;
+  padding: 60px 20px;
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 1px dashed #dce2e6;
+}
+
+.empty-state mat-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+  margin-bottom: 15px;
+  opacity: 0.5;
+}
+
+.empty-state .action-btn {
+  max-width: 200px;
+  margin: 20px auto 0;
+}
+
+/* Animation */
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

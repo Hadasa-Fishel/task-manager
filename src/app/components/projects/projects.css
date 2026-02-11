@@ -1,0 +1,191 @@
+.projects-container {
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 0 20px;
+  font-family: 'Roboto', sans-serif;
+}
+
+/* Header */
+.header-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.titles h2 {
+  font-weight: 300;
+  font-size: 28px;
+  margin: 0;
+  color: #2c3e50;
+}
+
+.titles p {
+  color: #95a5a6;
+  font-size: 13px;
+  margin-top: 5px;
+}
+
+/* Create Form - הותאם לעיצוב הקבוצות */
+.create-form-wrapper {
+  background: white;
+  padding: 20px; /* הותאם ל-20 במקום 25 */
+  border-radius: 8px;
+  border: 1px solid #eef2f6;
+  margin-bottom: 30px;
+  animation: slideDown 0.3s ease; /* שינוי אנימציה לזהה לקבוצות */
+}
+
+.project-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* הותאם לרווח של הקבוצות */
+}
+
+.full-width {
+  width: 100%;
+  font-size: 13px;
+  /* מומלץ להוסיף כאן עיצוב לאינפוטים עצמם אם אין גלובלי */
+  padding: 8px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+}
+
+.form-actions {
+  text-align: right;
+  margin-top: 10px;
+}
+
+/* Grid Layout */
+.cards-grid {
+  display: grid;
+  /* שינוי ל-250px כדי להיות זהה לגריד הקבוצות */
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); 
+  gap: 25px;
+}
+
+/* --- Project Card Design --- */
+.project-card {
+  background: white;
+  border-radius: 8px;
+  padding: 25px;
+  
+  /* היוקרה: מסגרת דקה ופס כחול עליון - זהה לקבוצות */
+  border: 1px solid #eef2f6;
+  border-top: 3px solid #3f51b5; /* הוחלף מטורקיז לכחול */
+  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+  
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.project-card:hover {
+  transform: translateY(-3px);
+  /* צללית כחולה במקום טורקיז */
+  box-shadow: 0 8px 25px rgba(63, 81, 181, 0.1); 
+}
+
+/* Card Header */
+.card-header {
+  margin-bottom: 15px;
+}
+
+.team-badge {
+  display: inline-block;
+  background-color: #f0f4f8;
+  color: #546e7a;
+  font-size: 10px; /* הותאם ל-SIZE של ה-LABEL בקבוצות */
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 1px; /* רווח אותיות כמו ב-LABEL בקבוצות */
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+
+.project-card h3 {
+  font-size: 18px;
+  font-weight: 400; /* משקל 400 כמו בקבוצות */
+  color: #2c3e50;
+  margin: 0;
+  margin-bottom: 10px;
+}
+
+/* Card Body */
+.description {
+  color: #7f8c8d; /* הותאם לצבעים המשניים */
+  font-size: 13px;
+  line-height: 1.5;
+  margin-bottom: 20px;
+  flex-grow: 1;
+}
+
+.meta-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  color: #b0b0b0;
+  border-top: 1px solid #f5f5f5;
+  padding-top: 15px;
+  margin-bottom: 20px;
+  text-transform: uppercase; /* התאמה לסגנון הכותרות הקטנות */
+  letter-spacing: 0.5px;
+}
+
+/* Card Actions */
+.card-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: auto; /* מוודא שנשאר למטה */
+}
+
+/* Primary Button - זהה לקבוצות */
+.action-btn.primary {
+  flex-grow: 1;
+  padding: 10px;
+  background: #3f51b5; /* כחול אינדיגו */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.action-btn.primary:hover {
+  background: #303f9f; /* כחול כהה יותר */
+}
+
+/* Delete Button - הותאם להיראות חלק מהסט */
+.icon-btn.delete {
+  background: transparent;
+  border: 1px solid #e0e0e0; /* מסגרת עדינה כמו הכפתור המשני בקבוצות */
+  color: #95a5a6;
+  width: 36px;
+  height: 36px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.icon-btn.delete:hover {
+  border-color: #ef5350;
+  color: #ef5350;
+  background: #fff5f5;
+}
+
+/* Animation */
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
