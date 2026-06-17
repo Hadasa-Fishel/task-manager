@@ -1,4 +1,4 @@
 export const environment = {
-  production: false,
-  apiUrl: 'https://wolftasks-server.onrender.com/health'
+  production: true,
+  apiUrl: 'https://wolftasks-server.onrender.com/api'
 };
