@@ -1,7 +1,7 @@
 import { Injectable, inject, signal, computed, PLATFORM_ID } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { isPlatformBrowser } from '@angular/common';
-import { tap, catchError, throwError } from 'rxjs';
+import { tap, catchError, throwError, Observable } from 'rxjs';
 import { AuthResponse, User, RegisterPayload } from '../models/types.model';
 import { Router } from '@angular/router';
 import { ToastService } from './toast.service';
@@ -27,9 +27,7 @@ export class AuthService {
     }
   }
 
-  // --- תיקון 1: הפונקציה מקבלת כעת 2 משתנים נפרדים ---
   login(email: string, password: string) {
-    // אנחנו אורזים אותם לאובייקט רק כששולחים לשרת
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, { email, password }).pipe(
       tap((response) => {
         if (response.token && response.user) {
@@ -44,7 +42,6 @@ export class AuthService {
     );
   }
 
-  // --- תיקון 2: הפונקציה מקבלת RegisterPayload ולא User ---
   register(payload: RegisterPayload) {
     return this.http.post<AuthResponse>(`${this.apiUrl}/register`, payload).pipe(
       tap((response) => {
@@ -93,6 +90,15 @@ export class AuthService {
         this.logout();
       }
     }
+  }
+
+  getAllUsers(): Observable<User[]> {
+    return this.http.get<User[]>(`${environment.apiUrl}/users`).pipe(
+      catchError((err) => {
+        console.error('Error loading users:', err);
+        return throwError(() => err);
+      })
+    );
   }
   
   getToken(): string | null {

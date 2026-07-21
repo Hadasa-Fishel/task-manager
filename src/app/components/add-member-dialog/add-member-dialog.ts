@@ -21,18 +21,16 @@ import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
     <div class="dialog-container">
       <div class="dialog-header">
         <h2>Add New Member</h2>
-        <p>Enter the email address to invite a user to your team.</p>
+        <p>Enter the User ID to invite a user to your team.</p>
       </div>
 
       <div class="dialog-content">
         <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Member Email</mat-label>
-          <input matInput [formControl]="emailControl" placeholder="name@example.com">
-          @if (emailControl.hasError('email') && !emailControl.hasError('required')) {
-            <mat-error>Please enter a valid email address</mat-error>
-          }
-          @if (emailControl.hasError('required')) {
-            <mat-error>Email is required</mat-error>
+          <mat-label>Member User ID</mat-label>
+          <!-- שדה קלט המבקש ID במקום אימייל -->
+          <input matInput [formControl]="userIdControl" placeholder="Enter User ID (e.g., 5)">
+          @if (userIdControl.hasError('required')) {
+            <mat-error>User ID is required</mat-error>
           }
         </mat-form-field>
       </div>
@@ -41,7 +39,7 @@ import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
         <button class="action-btn secondary" (click)="close()">Cancel</button>
         <button class="action-btn primary" 
                 (click)="add()" 
-                [disabled]="emailControl.invalid">
+                [disabled]="userIdControl.invalid">
           Add Member
         </button>
       </div>
@@ -52,12 +50,13 @@ import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 export class AddMemberDialogComponent {
   private dialogRef = inject(MatDialogRef<AddMemberDialogComponent>);
   
-  // הגדרת שדה עם ולידציה לאימייל חובה
-  emailControl = new FormControl('', [Validators.required, Validators.email]);
+  // הגדרת שדה עם ולידציה ל-ID חובה
+  userIdControl = new FormControl('', [Validators.required]);
 
   add() {
-    if (this.emailControl.valid) {
-      this.dialogRef.close(this.emailControl.value);
+    if (this.userIdControl.valid) {
+      // מחזיר את ה-ID שהוקלד כדי שהשירות ישלח אותו לשרת
+      this.dialogRef.close(this.userIdControl.value);
     }
   }
 

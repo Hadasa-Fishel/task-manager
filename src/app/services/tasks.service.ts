@@ -13,7 +13,6 @@ export class TasksService {
   private toastService = inject(ToastService);
   private apiUrl = `${environment.apiUrl}/tasks`;
 
-  // הסיגנל שמחזיק את כל המשימות של הפרויקט הנוכחי
   projectTasks = signal<Task[]>([]);
   isLoading = signal<boolean>(false);
 
@@ -23,13 +22,24 @@ export class TasksService {
       tap((tasks) => {
         this.projectTasks.set(tasks);
         this.isLoading.set(false);
+
+        tasks.forEach(task => {
+          this.http.get<any[]>(`${environment.apiUrl}/comments?taskId=${task.id}`).subscribe({
+            next: (comments) => {
+              this.projectTasks.update(currentTasks =>
+                currentTasks.map(t => t.id === task.id ? { ...t, comments: comments } : t)
+              );
+            },
+            error: (err) => console.error(`Failed to load comments for task ${task.id}`, err)
+          });
+        });
       }),
       catchError((err) => {
         this.isLoading.set(false);
         return throwError(() => err);
       })
     );
-  }
+  }  
 
   createTask(task: Partial<Task>) {
     return this.http.post<Task>(this.apiUrl, task).pipe(
@@ -41,14 +51,13 @@ export class TasksService {
   }
 
   updateTask(taskId: number, updates: Partial<Task>) {
-    return this.http.put<Task>(`${this.apiUrl}/${taskId}`, updates).pipe(
-      tap((updatedTask) => {
-        this.projectTasks.update(tasks => 
+    return this.http.patch<Task>(`${this.apiUrl}/${taskId}`,updates).pipe(tap((updatedTask) => {
+        this.projectTasks.update(tasks =>
           tasks.map(t => t.id === taskId ? updatedTask : t)
         );
         this.toastService.showSuccess('Task updated');
       })
-    );
+      );
   }
 
   deleteTask(taskId: number) {
@@ -56,6 +65,20 @@ export class TasksService {
       tap(() => {
         this.projectTasks.update(tasks => tasks.filter(t => t.id !== taskId));
         this.toastService.showSuccess('Task deleted');
+      })
+    );
+  }
+
+addComment(taskId: number, content: string) {
+    return this.http.post(`${environment.apiUrl}/comments`, { taskId: taskId, body: content }).pipe(
+      tap(() => {
+        this.toastService.showSuccess('Comment sent');
+        
+        this.http.get<any[]>(`${environment.apiUrl}/comments?taskId=${taskId}`).subscribe(updatedComments => {
+          this.projectTasks.update(currentTasks =>
+            currentTasks.map(t => t.id === taskId ? { ...t, comments: updatedComments } : t)
+          );
+        });
       })
     );
   }

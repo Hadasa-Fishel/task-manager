@@ -52,23 +52,19 @@ export class TeamsService {
     );
   }
 
-  // 3. הוספת חבר לצוות (התיקון החשוב!)
-  addMember(teamId: string, email: string): Observable<any> {
+  addMember(teamId: string, userId: string | number): Observable<any> {
     const url = `${this.apiUrl}/${teamId}/members`;
     
-    // חובה לשלוח אובייקט, לא סתם מחרוזת! השרת מצפה ל- body.email
-    const body = { email: email }; 
+    const body = { userId: userId }; 
 
     return this.http.post(url, body).pipe(
       tap(() => {
-        this.toastService.showSuccess('Member invite sent successfully');
+        this.toastService.showSuccess('Member added successfully');
         
-        // טעינה מחדש של הצוותים כדי לעדכן את מונה החברים בכרטיס
         this.loadTeams().subscribe(); 
       }),
       catchError((err) => {
-        // טיפול בשגיאות נפוצות (למשל: משתמש לא קיים)
-        const errorMsg = err.error?.message || 'Failed to add member. Please check the email.';
+        const errorMsg = err.error?.error || 'Failed to add member.';
         this.toastService.showError(errorMsg);
         return throwError(() => err);
       })

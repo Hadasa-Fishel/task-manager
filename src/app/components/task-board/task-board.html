@@ -1,5 +1,4 @@
 <div class="board-container">
-  
   <div class="board-header">
     <h2>Project Board</h2>
     <div class="legend">
@@ -9,43 +8,49 @@
     </div>
   </div>
 
-  <div class="columns-wrapper">
-    
-    <div class="board-column todo-col">
+  <div class="columns-wrapper" cdkDropListGroup>
+
+    <div class="board-column" cdkDropList [cdkDropListData]="todoTasks()"
+      (cdkDropListDropped)="dropTask($event, 'todo')">
       <div class="column-header">
         <h3>To Do <span class="count">{{ todoTasks().length }}</span></h3>
         <button class="add-btn-small" (click)="openAddModal('todo')">+</button>
       </div>
-      
       <div class="tasks-list">
         @for (task of todoTasks(); track task.id) {
+        <div class="task-drag-wrapper" cdkDrag [cdkDragData]="task">
           <ng-container *ngTemplateOutlet="taskCard; context: { $implicit: task }"></ng-container>
+        </div>
         }
       </div>
     </div>
 
-    <div class="board-column progress-col">
+    <div class="board-column" cdkDropList [cdkDropListData]="inProgressTasks()"
+      (cdkDropListDropped)="dropTask($event, 'in-progress')">
       <div class="column-header">
         <h3>In Progress <span class="count">{{ inProgressTasks().length }}</span></h3>
         <button class="add-btn-small" (click)="openAddModal('in-progress')">+</button>
       </div>
-
       <div class="tasks-list">
         @for (task of inProgressTasks(); track task.id) {
+        <div class="task-drag-wrapper" cdkDrag [cdkDragData]="task">
           <ng-container *ngTemplateOutlet="taskCard; context: { $implicit: task }"></ng-container>
+        </div>
         }
       </div>
     </div>
 
-    <div class="board-column done-col">
+    <div class="board-column" cdkDropList [cdkDropListData]="doneTasks()"
+      (cdkDropListDropped)="dropTask($event, 'done')">
       <div class="column-header">
         <h3>Done <span class="count">{{ doneTasks().length }}</span></h3>
         <button class="add-btn-small" (click)="openAddModal('done')">+</button>
       </div>
-
       <div class="tasks-list">
         @for (task of doneTasks(); track task.id) {
+        <div class="task-drag-wrapper" cdkDrag [cdkDragData]="task">
           <ng-container *ngTemplateOutlet="taskCard; context: { $implicit: task }"></ng-container>
+        </div>
         }
       </div>
     </div>
@@ -54,14 +59,14 @@
 </div>
 
 <ng-template #taskCard let-task>
-  <div class="task-card" [class.border-high]="task.priority === 'HIGH'">
-    
+  <div class="task-card">
     <div class="task-header">
-      <span class="priority-dot" [ngClass]="task.priority?.toLowerCase()"></span>
-      <span class="date">{{ task.created_at | date:'d MMM' }}</span>
-      
-      <button mat-icon-button [matMenuTriggerFor]="menu" class="more-btn">
-        <mat-icon>more_vert</mat-icon>
+      <div class="status-indicator">
+        <span class="priority-dot" [ngClass]="task.priority?.toLowerCase()"></span>
+        <span class="date">{{ task.created_at | date:'d MMM' }}</span>
+      </div>
+      <button class="edit-text-btn" (click)="openEditModal(task)">
+        <mat-icon>edit</mat-icon> Edit
       </button>
       <mat-menu #menu="matMenu">
         <button mat-menu-item (click)="openEditModal(task)">Edit Task</button>
@@ -70,72 +75,65 @@
     </div>
 
     <h4>{{ task.title }}</h4>
-    
     <p class="desc">{{ task.description }}</p>
 
-    <div class="task-footer">
-      <button class="footer-btn">
-        <mat-icon>chat_bubble_outline</mat-icon> 0
-      </button>
-
-      <div class="move-actions">
-        @if (task.status !== 'todo') {
-          <button (click)="moveTask(task, 'todo')" title="Move to Todo">Start</button>
-        }
-        @if (task.status === 'todo') {
-          <button (click)="moveTask(task, 'in-progress')" title="Start Working">Start</button>
-        }
-        @if (task.status === 'in-progress') {
-          <button (click)="moveTask(task, 'done')" title="Complete">Done</button>
-        }
+    @if (task.comments && task.comments.length > 0) {
+    <div class="comments-area">
+      @for (comment of task.comments; track comment.id) {
+      <div class="comment-bubble">
+        <p class="comment-text">{{ comment.body }}</p>
+        <span class="comment-time">{{ comment.created_at | date:'HH:mm' }}</span>
       </div>
+      }
     </div>
+    }
 
+    <div class="whatsapp-comment-box">
+      <input #commentInput type="text" placeholder="הוסף תגובה..."
+        (keyup.enter)="addComment(task.id, commentInput.value); commentInput.value=''">
+      <button class="send-btn" (click)="addComment(task.id, commentInput.value); commentInput.value=''">
+        <mat-icon>send</mat-icon>
+      </button>
+    </div>
   </div>
 </ng-template>
 
 @if (showModal) {
-  <div class="modal-overlay" (click)="closeModal()">
-    <div class="modal-content" (click)="$event.stopPropagation()">
-      <h3>{{ isEditing ? 'Edit Task' : 'New Task' }}</h3>
-      
-      <form [formGroup]="taskForm" (ngSubmit)="saveTask()">
-        
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Task Title</mat-label>
-          <input matInput formControlName="title">
+<div class="modal-overlay" (click)="closeModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <h3>{{ isEditing ? 'Edit Task' : 'New Task' }}</h3>
+    <form [formGroup]="taskForm" (ngSubmit)="saveTask()">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Task Title</mat-label>
+        <input matInput formControlName="title">
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Description</mat-label>
+        <textarea matInput formControlName="description" rows="3"></textarea>
+      </mat-form-field>
+      <div class="row">
+        <mat-form-field appearance="outline">
+          <mat-label>Priority</mat-label>
+          <mat-select formControlName="priority">
+            <mat-option value="HIGH">High</mat-option>
+            <mat-option value="MEDIUM">Medium</mat-option>
+            <mat-option value="LOW">Low</mat-option>
+          </mat-select>
         </mat-form-field>
-
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Description</mat-label>
-          <textarea matInput formControlName="description" rows="3"></textarea>
+        <mat-form-field appearance="outline">
+          <mat-label>Status</mat-label>
+          <mat-select formControlName="status">
+            <mat-option value="todo">To Do</mat-option>
+            <mat-option value="in-progress">In Progress</mat-option>
+            <mat-option value="done">Done</mat-option>
+          </mat-select>
         </mat-form-field>
-
-        <div class="row">
-          <mat-form-field appearance="outline">
-            <mat-label>Priority</mat-label>
-            <mat-select formControlName="priority">
-              <mat-option value="HIGH">High 🔥</mat-option>
-              <mat-option value="MEDIUM">Medium</mat-option>
-              <mat-option value="LOW">Low</mat-option>
-            </mat-select>
-          </mat-form-field>
-
-          <mat-form-field appearance="outline">
-            <mat-label>Status</mat-label>
-            <mat-select formControlName="status">
-              <mat-option value="todo">To Do</mat-option>
-              <mat-option value="in-progress">In Progress</mat-option>
-              <mat-option value="done">Done</mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
-
-        <div class="modal-actions">
-          <button type="button" mat-button (click)="closeModal()">Cancel</button>
-          <button type="submit" mat-flat-button color="primary">Save</button>
-        </div>
-      </form>
-    </div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" mat-button (click)="closeModal()">Cancel</button>
+        <button type="submit" mat-flat-button color="primary">Save</button>
+      </div>
+    </form>
   </div>
+</div>
 }

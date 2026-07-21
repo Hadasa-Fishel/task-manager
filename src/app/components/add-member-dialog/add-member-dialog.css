@@ -34,11 +34,11 @@
 /* Actions Area */
 .dialog-actions {
   display: flex;
-  justify-content: flex-end; /* כפתורים בצד ימין */
+  justify-content: flex-end;
   gap: 12px;
 }
 
-/* Buttons Styling (Same as global theme) */
+/* Buttons Styling */
 .action-btn {
   padding: 10px 20px;
   border-radius: 4px;

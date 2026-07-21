@@ -5,7 +5,8 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TasksService } from '../../services/tasks.service';
 import { Task } from '../../models/types.model';
 
-// Material
+import { DragDropModule, CdkDragDrop } from '@angular/cdk/drag-drop';
+
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -18,7 +19,8 @@ import { MatMenuModule } from '@angular/material/menu';
   standalone: true,
   imports: [
     CommonModule, ReactiveFormsModule, DatePipe,
-    MatButtonModule, MatIconModule, MatInputModule, 
+    DragDropModule, // הוספנו לכאן
+    MatButtonModule, MatIconModule, MatInputModule,
     MatFormFieldModule, MatSelectModule, MatMenuModule
   ],
   templateUrl: './task-board.html',
@@ -30,22 +32,19 @@ export class TaskBoard implements OnInit {
   private fb = inject(FormBuilder);
 
   projectId!: number;
-  
-  // משתנים למודל עריכה/יצירה
+
   showModal = false;
   isEditing = false;
   currentEditingId: number | null = null;
 
-  // חלוקת המשימות לעמודות (Computed Signals)
   todoTasks = computed(() => this.tasksService.projectTasks().filter(t => t.status === 'todo'));
   inProgressTasks = computed(() => this.tasksService.projectTasks().filter(t => t.status === 'in-progress'));
   doneTasks = computed(() => this.tasksService.projectTasks().filter(t => t.status === 'done'));
 
-  // הטופס
   taskForm = this.fb.group({
     title: ['', [Validators.required, Validators.minLength(3)]],
     description: [''],
-    priority: ['MEDIUM'], // ברירת מחדל
+    priority: ['MEDIUM'],
     status: ['todo']
   });
 
@@ -58,15 +57,36 @@ export class TaskBoard implements OnInit {
     });
   }
 
-  // פתיחת חלונית להוספה
+  dropTask(event: CdkDragDrop<Task[]>, newStatus: 'todo' | 'in-progress' | 'done') {
+    if (event.previousContainer !== event.container) {
+      const task = event.item.data as Task;
+      this.tasksService.updateTask(task.id, { status: newStatus }).subscribe();
+    }
+  }
+
+
+
+  addComment(taskId: number, content: string) {
+    if (!content.trim()) return;
+
+    this.tasksService.addComment(taskId, content).subscribe({
+      next: () => {
+        console.log(`Comment saved successfully for task ${taskId}`);
+        this.tasksService.loadTasks(this.projectId).subscribe();
+      },
+      error: (err) => {
+        console.error('Failed to add comment:', err);
+      }
+    });
+  }
+
   openAddModal(status: 'todo' | 'in-progress' | 'done' = 'todo') {
     this.isEditing = false;
     this.currentEditingId = null;
-    this.taskForm.reset({ status: status, priority: 'MEDIUM' }); // מאפס לסטטוס של העמודה
+    this.taskForm.reset({ status: status, priority: 'MEDIUM' });
     this.showModal = true;
   }
 
-  // פתיחת חלונית לעריכה
   openEditModal(task: Task) {
     this.isEditing = true;
     this.currentEditingId = task.id;
@@ -93,21 +113,14 @@ export class TaskBoard implements OnInit {
     } as any;
 
     if (this.isEditing && this.currentEditingId) {
-      // עדכון
       this.tasksService.updateTask(this.currentEditingId, payload).subscribe(() => this.closeModal());
     } else {
-      // יצירה
       this.tasksService.createTask(payload).subscribe(() => this.closeModal());
     }
   }
 
-  // העברה מהירה בין עמודות
-  moveTask(task: Task, newStatus: 'todo' | 'in-progress' | 'done') {
-    this.tasksService.updateTask(task.id, { status: newStatus }).subscribe();
-  }
-
   deleteTask(taskId: number) {
-    if(confirm('Delete this task?')) {
+    if (confirm('Delete this task?')) {
       this.tasksService.deleteTask(taskId).subscribe();
     }
   }
